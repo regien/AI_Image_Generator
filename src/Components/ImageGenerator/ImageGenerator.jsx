@@ -9,6 +9,7 @@ export const ImageGenerator = () => {
 	const [image_url, setImage_url] = useState("/");
 	const [useImageCount, setUseImageCount] = useState(0);
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
 
 	const MAX_NUMBER_OF_USES = 2;
 	const navigate = useNavigate();
@@ -22,36 +23,43 @@ export const ImageGenerator = () => {
 		setLoading(true);
 		
 		// todo gemalpar = add an env variable for Amplify
-		const response = await fetch(
-			"https://api.openai.com/v1/images/generations",
+		try {
+			const response = await fetch(
+				"https://api.openai.com/v1/images/generations",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization:
+						"Bearer sk-proj-I7LRWxgVNgyjU0Op2XnjT3BlbkFJawXg7Ut018u1MTWz9ZKu",
+						"User-Agent": "Chrome",
+					},
+					body: JSON.stringify({
+						"model": "dall-e-2",
+						prompt: `${inputRef.current.value}`,
+						n: 1,
+						size: "512x512",
+					}),
+				}
+			);
+
+			if (!response.ok)
 			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization:
-					"Bearer sk-proj-I7LRWxgVNgyjU0Op2XnjT3BlbkFJawXg7Ut018u1MTWz9ZKu",
-					"User-Agent": "Chrome",
-				},
-				body: JSON.stringify({
-					"model": "dall-e-2",
-					prompt: `${inputRef.current.value}`,
-					n: 1,
-					size: "512x512",
-				}),
+				throw new Error("Something went wrong, input might be invalid or server saturated please try again.");
 			}
-		);
-		// do some type of error checking
-		// like limit breaking or invalid size
 
-		let data = await response.json();
-		console.log(data);
-		let data_array = data.data;
-		setImage_url(data_array[0].url);
+			let data = await response.json();
+			console.log(data);
+			let data_array = data.data;
+			setImage_url(data_array[0].url);
 
-		// maximum of two and then get back to zero at refresh
-		setUseImageCount(useImageCount + 1);
+			// maximum of two and then get back to zero at refresh
+			setUseImageCount(useImageCount + 1);
 
-		//setLoading(false);
+		} catch (error) {
+			setError(error.message);
+		}
+
 		// store the image in the local storage or firebase, just use S3
 	}
 
@@ -61,7 +69,7 @@ export const ImageGenerator = () => {
 
 	const goToGallery = () => {
 		navigate("/gallery");
-	}
+	};
  
   return (
 	<div className='ai-image-generator'>
@@ -78,6 +86,7 @@ export const ImageGenerator = () => {
 			<input type="text" ref={inputRef} className="search-input" placeholder='Describe What you want to See' disabled={useImageCount >= MAX_NUMBER_OF_USES || loading}/>
 			<div className="generate-btn" onClick={() => {imageGenerator()}} disabled={useImageCount >= MAX_NUMBER_OF_USES || loading}>Generate</div>
 		</div>
+			{error && <p className="mt-2 text-red-500">{error}</p>}
 		<div>
 			<button className='generate-btn' onClick={goToGallery}>Go to gallery.</button>
 		</div>
