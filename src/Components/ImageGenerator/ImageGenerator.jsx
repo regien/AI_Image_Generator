@@ -44,6 +44,7 @@ export const ImageGenerator = () => {
 		console.log(data);
 		let data_array = data.data;
 		setImage_url(data_array[0].url);
+		setLoading(false);
 
 		// store the image in the local storage
 	}
