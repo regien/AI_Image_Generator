@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import './ImageGenerator.css'
 import default_image from '../Assets/default_image.png'
+import { useNavigate } from 'react-router-dom';
 
 
 export const ImageGenerator = () => {
@@ -10,6 +11,7 @@ export const ImageGenerator = () => {
 	const [loading, setLoading] = useState(false);
 
 	const MAX_NUMBER_OF_USES = 2;
+	const navigate = useNavigate();
 	let inputRef = useRef(null);
 
 	const imageGenerator = async () => {
@@ -56,6 +58,10 @@ export const ImageGenerator = () => {
 	const handleImageLoad = () => {
 		setLoading(false);
 	};
+
+	const goToGallery = () => {
+		navigate("/gallery");
+	}
  
   return (
 	<div className='ai-image-generator'>
@@ -71,6 +77,9 @@ export const ImageGenerator = () => {
 		<div className="search-box">
 			<input type="text" ref={inputRef} className="search-input" placeholder='Describe What you want to See' disabled={useImageCount >= MAX_NUMBER_OF_USES || loading}/>
 			<div className="generate-btn" onClick={() => {imageGenerator()}} disabled={useImageCount >= MAX_NUMBER_OF_USES || loading}>Generate</div>
+		</div>
+		<div>
+			<button className='generate-btn' onClick={goToGallery}>Go to gallery.</button>
 		</div>
 	</div>
   )
