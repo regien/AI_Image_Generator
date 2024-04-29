@@ -24,22 +24,14 @@ export const LazyLoadImage = ({ src, alt }) => {
 		};
 	}, []);
 
-	/*
-				{image.map((url, index) => (
-					<div key={index} className="max-w-sm rounded overflow-hidden shadow-lg m-auto transform transition-transform duration-500 hover:scale-110">
-						<a href={url} target="_blank" rel="noopener noreferrer">
-							<img className="w-full" src={url} alt={`Image ${index + 1}`} />
-						</a>
-					</div>
-	*/
-
-
 	return (
-		<img
-			ref={imgRef}
-			src={loaded ? `${s3BucketPrefix}${src}` : loadingIMG }
-			alt={alt}
-			className='w-full'
-		/>
+		<a href={`${s3BucketPrefix}${src}`} target="_blank" rel="noopener noreferrer">
+			<img
+				ref={imgRef}
+				src={loaded ? `${s3BucketPrefix}${src}` : loadingIMG }
+				alt={alt}
+				className='w-full'
+			/>
+		</a>
 	);
 };

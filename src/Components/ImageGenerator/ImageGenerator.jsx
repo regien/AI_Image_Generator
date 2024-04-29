@@ -3,11 +3,6 @@ import './ImageGenerator.css'
 import default_image from '../Assets/default_image.png'
 import { useNavigate } from 'react-router-dom';
 
-import AWS from 'aws-sdk';
-
-
-//const lambda = new AWS.Lambda();
-
 export const ImageGenerator = () => {
 	
 	const [image_url, setImage_url] = useState("/");
@@ -27,7 +22,7 @@ export const ImageGenerator = () => {
 		setLoading(true);
 		
 		try {
-
+			// Add retry if Fails
 			const responseFromS3 = await fetch(
 				"https://jjav8ageyg.execute-api.us-east-2.amazonaws.com/default/uploadImage",
 				{
@@ -55,10 +50,6 @@ export const ImageGenerator = () => {
 			setImage_url(dataResponseBody.imageUrl);
 			setUseImageCount(useImageCount + 1);
 
-			// if Failed try again
-
-			//let data = await responseFromS3.json();
-
 		} catch (error) {
 			setError(error.message);
 		}
@@ -72,7 +63,7 @@ export const ImageGenerator = () => {
 	const goToGallery = () => {
 		navigate("/gallery");
 	};
- 
+
   return (
 	<div className='ai-image-generator'>
 		<div className="header">Ai image <span>Generator</span></div>

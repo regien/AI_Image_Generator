@@ -1,27 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react'
 // testing files
-import vivaldi1 from '../Assets/vivaldi1.webp'
-import vivaldi2 from '../Assets/vivaldi2.webp'
-import vivaldi3 from '../Assets/vivaldi3.webp'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LazyLoadImage } from './LazyLoadImage'
 
 export const ImageGallery = () => {
-	// testing, later use a get request from S3 for latest art.
-	//const [image, setImages] = useState([vivaldi1, vivaldi2, vivaldi3]);
 	const [images, setImages] = useState([]);
 
-	const [page, setPage]  = useState(1);
+	const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
 	const [continuationToken, setContinuationToken] = useState(null);
-	const pageSize = 3;
+	const pageSize = 50;
 
 	const navigate = useNavigate();
 	const fetchImages = async () => {
 		try {
 
 			const body = {
-				page,
 				pageSize
 			}
 
@@ -77,7 +71,8 @@ export const ImageGallery = () => {
 		if (continuationToken !== null)
 		{
 			fetchImages();
-			// keep adding images
+		} else {
+			setAllImagesLoaded(true);
 		}
 	}
 	
@@ -85,7 +80,7 @@ export const ImageGallery = () => {
 	return (
 		<div>
 			<h1 className="font-bold my-8 text-7xl text-center">
-				This is the cool art being done with <span className="text-pink-500">AI</span> so far <span className="text-pink-500">At the Expo</span> Today
+				This is the cool art being done with <span className="text-pink-500">AI</span> so far <span className="text-pink-500">At the Expo</span>
 			</h1>
 			<div className="text-center my-4">
 				<button className="bg-pink-400 hover:bg-pink-700 text-white font-bold text-2xl py-2 px-8 rounded-full" onClick={goToImageGenerator}>
@@ -95,14 +90,12 @@ export const ImageGallery = () => {
 			<div className="grid grid-cols-3 gap-4 p-4 items-center justify-center">
 				{images.map((url, index) => (
 					<div key={index} className="max-w-sm rounded overflow-hidden shadow-lg m-auto transform transition-transform duration-500 hover:scale-110">
-						<a href={url} target="_blank" rel="noopener noreferrer">
-							{/* <img className="w-full" src={url} alt={`Image ${index + 1}`} /> */}
-							<LazyLoadImage src={url} alt={`Image ${index + 1}`} />
-						</a>
+						<LazyLoadImage src={url} alt={`Image ${index + 1}`} />
 					</div>
 				))}
 			</div>
-			<button onClick={loadMoreImages} className="bg-pink-400 hover:bg-pink-700 text-white font-bold text-2xl py-2 px-8 rounded-full m-auto block">
+			{allImagesLoaded && <p className="text-center text-2xl m-6">All images loaded <Link to="/" className="text-pink-500 hover:underline">Keep creating here</Link></p>}
+			<button onClick={loadMoreImages} className="bg-pink-400 hover:bg-pink-700 text-white font-bold text-2xl py-2 px-8 rounded-full m-auto block mb-8 mt-6">
 				Load More
 			</button>
 		</div>
