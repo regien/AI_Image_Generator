@@ -3,6 +3,7 @@ import loadingIMG from '../Assets/loading.webp'
 
 export const LazyLoadImage = ({ src, alt }) => {
 	const [loaded, setLoaded] = useState(false);
+	const s3BucketPrefix = "https://imagebucketdalle.s3.us-east-2.amazonaws.com/";
 	const imgRef = useRef();
 
 	useEffect(() => {
@@ -36,7 +37,7 @@ export const LazyLoadImage = ({ src, alt }) => {
 	return (
 		<img
 			ref={imgRef}
-			src={loaded ? src : loadingIMG }
+			src={loaded ? `${s3BucketPrefix}${src}` : loadingIMG }
 			alt={alt}
 			className='w-full'
 		/>
