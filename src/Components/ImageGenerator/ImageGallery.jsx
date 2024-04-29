@@ -4,6 +4,7 @@ import vivaldi1 from '../Assets/vivaldi1.webp'
 import vivaldi2 from '../Assets/vivaldi2.webp'
 import vivaldi3 from '../Assets/vivaldi3.webp'
 import { useNavigate } from 'react-router-dom'
+import { LazyLoadImage } from './LazyLoadImage'
 
 export const ImageGallery = () => {
 	// testing, later use a get request from S3 for latest art.
@@ -56,11 +57,15 @@ export const ImageGallery = () => {
 				{image.map((url, index) => (
 					<div key={index} className="max-w-sm rounded overflow-hidden shadow-lg m-auto transform transition-transform duration-500 hover:scale-110">
 						<a href={url} target="_blank" rel="noopener noreferrer">
-							<img className="w-full" src={url} alt={`Image ${index + 1}`} />
+							{/* <img className="w-full" src={url} alt={`Image ${index + 1}`} /> */}
+							<LazyLoadImage src={url} alt={`Image ${index + 1}`} />
 						</a>
 					</div>
 				))}
 			</div>
+			<button onClick={loadMoreImages} className="bg-pink-400 hover:bg-pink-700 text-white font-bold text-2xl py-2 px-8 rounded-full m-auto block">
+				Load More
+			</button>
 		</div>
   	);
   

@@ -35,7 +35,7 @@ export const ImageGenerator = () => {
 		
 		// todo gemalpar = add an env variable for Amplify
 		try {
-			const response = await fetch(
+			/*const response = await fetch(
 				"https://api.openai.com/v1/images/generations",
 				{
 					method: "POST",
@@ -62,11 +62,12 @@ export const ImageGenerator = () => {
 			let data = await response.json();
 			console.log(data);
 			let data_array = data.data;
-			setImage_url(data_array[0].url);
+			*/
+			// setImage_url(data_array[0].url);
 			// callLambdaFunction();
 
 			// maximum of two and then get back to zero at refresh
-			setUseImageCount(useImageCount + 1);
+			// setUseImageCount(useImageCount + 1);
 
 			const responseFromS3 = await fetch(
 				"https://jjav8ageyg.execute-api.us-east-2.amazonaws.com/default/uploadImage",
@@ -82,18 +83,28 @@ export const ImageGenerator = () => {
 						"User-Agent": "Chrome",
 					},
 					body: JSON.stringify({
-						url: image_url,
+						//url: image_url,
+						prompt: `${inputRef.current.value}`,
 					}),
 				}
 			);
-			let dataFromS3 = await responseFromS3.json();
-			console.log(dataFromS3);
 
-			if (!response.ok)
+			if (!responseFromS3.ok)
 			{
 				throw new Error("Something went wrong, Art couldn't be stored in Gallery.");
 			}
+
+			let dataFromS3 = await responseFromS3.json();
+			console.log(dataFromS3);
+			let dataResponseBody = JSON.parse(dataFromS3.body);
+			console.log(dataResponseBody);
+			
+			setImage_url(dataResponseBody.imageUrl);
+			setUseImageCount(useImageCount + 1);
+
 			// if Failed try again
+
+			//let data = await responseFromS3.json();
 
 		} catch (error) {
 			setError(error.message);

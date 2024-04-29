@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import loadingIMG from '../Assets/loading.webp'
 
 export const LazyLoadImage = ({ src, alt }) => {
