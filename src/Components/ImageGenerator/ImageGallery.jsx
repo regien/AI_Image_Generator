@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 // testing files
 import vivaldi1 from '../Assets/vivaldi1.webp'
 import vivaldi2 from '../Assets/vivaldi2.webp'
@@ -6,16 +6,40 @@ import vivaldi3 from '../Assets/vivaldi3.webp'
 import { useNavigate } from 'react-router-dom'
 
 export const ImageGallery = () => {
-
 	// testing, later use a get request from S3 for latest art.
 	const [image, setImages] = useState([vivaldi1, vivaldi2, vivaldi3]);
 
+	const [page, setPage]  = useState(1);
+	const pageSize = 50;
+
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const fetchImages = async () => {
+			try {
+				const response = await fetch(`get_lambda_function?page=${page}&pageSize=${pageSize}`);
+				const data = await response.json();
+				setImages(prevImages => [...prevImages, ...data]);
+			} catch (error) {
+				console.error("Failed to fetch images:", error);
+			}
+		};
+
+		fetchImages();
+
+	}, [page]);
+
+
 
 
 	const goToImageGenerator = () => {
 		navigate('/');
 	};
+	
+
+	const loadMoreImages = () => {
+		setPage(prevPage => prevPage + 1);
+	}
 	
 
 	return (
